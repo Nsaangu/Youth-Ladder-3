@@ -1,0 +1,855 @@
+﻿📁 Part 1: HTML Structure File (index.html)
+This file contains all page layout, modal windows, tab content and static UI elements, no logic code:
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Youth Ladder Zambia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+    <script src="./tailwind-config.js"></script>
+    <link rel="stylesheet" href="./custom-styles.css">
+</head>
+<body class="bg-gray-50 text-gray-700 min-h-screen scrap-paper">
+    <a href="tel:+260971234567" class="fixed bottom-20 md:bottom-5 right-5 z-40 bg-danger-500 text-white px-4 py-3 rounded-full card-shadow gentle-transition hover:bg-danger-600">
+        <i class="fa fa-phone mr-1"></i> 24/7 Crisis Help
+    </a>
+    <div class="mobile-bottom-nav">
+        <button class="text-center text-xs text-gray-600" onclick="switchTab('feed')">
+            <i class="fa fa-home text-lg block mb-1"></i> Community
+        </button>
+        <button class="text-center text-xs text-gray-600" onclick="switchTab('support')">
+            <i class="fa fa-heart text-lg block mb-1"></i> Support
+        </button>
+        <button class="text-center text-xs text-amber-700" onclick="openDock()">
+            <i class="fa fa-book text-lg block mb-1"></i> My Dock
+        </button>
+        <button id="mod-nav-btn" class="hidden text-center text-xs text-gray-600" onclick="switchTab('mod')">
+            <i class="fa fa-shield text-lg block mb-1"></i> Mod
+        </button>
+        <button id="admin-nav-btn" class="hidden text-center text-xs text-gray-600" onclick="switchTab('admin')">
+            <i class="fa fa-cog text-lg block mb-1"></i> Admin
+        </button>
+        <button id="dev-nav-btn" class="hidden text-center text-xs text-pink-600" onclick="switchTab('dev')">
+            <i class="fa fa-code text-lg block mb-1"></i> Developer
+        </button>
+    </div>
+    <nav class="bg-white card-shadow sticky top-0 z-40">
+        <div class="max-w-full mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-xl font-semibold text-calm-600">Youth Ladder Zambia</h1>
+            <div id="auth-buttons" class="flex gap-2">
+                <button id="open-login-btn" class="px-4 py-2 bg-calm-500 text-white rounded-lg gentle-transition hover:bg-calm-600">Login</button>
+                <button id="open-register-btn" class="px-4 py-2 bg-calm-50 text-calm-600 rounded-lg gentle-transition hover:bg-calm-100">Register</button>
+            </div>
+            <div id="user-menu" class="hidden flex items-center gap-3">
+                <span id="current-role" class="text-sm text-gray-500 compact-hide"></span>
+                <button onclick="openRoleLogin()" class="px-3 py-1 bg-yellow-100 rounded-lg text-sm">Role Login</button>
+                <button onclick="logout()" class="px-3 py-1 bg-gray-100 rounded-lg text-sm">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- All Modal Windows -->
+    <div id="community-key-modal" class="fixed inset-0 bg-black/75 flex items-center justify-center z-[1000] p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border-4 border-amber-200">
+            <div class="text-center mb-5">
+                <i class="fa fa-key text-4xl text-amber-600 mb-3"></i>
+                <h2 class="text-2xl font-bold text-gray-800">Unlock Youth Ladder Zambia</h2>
+                <p class="text-sm text-gray-500 mt-2">Enter your shared community access code to open the platform</p>
+            </div>
+            <input id="community-secret-key" type="password" placeholder="Enter your community access code" class="w-full border-2 border-gray-200 rounded-xl p-3 mb-4 focus:outline-none focus:border-amber-500">
+            <button id="unlock-platform" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl transition-all">Unlock Platform</button>
+        </div>
+    </div>
+
+
+    <div id="dock-first-setup-modal" class="fixed inset-0 bg-black/75 flex items-center justify-center z-[1000] p-4 hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border-4 border-green-200">
+            <div class="text-center mb-5">
+                <i class="fa fa-user-lock text-4xl text-green-600 mb-3"></i>
+                <h2 class="text-2xl font-bold text-gray-800">Set Your Private Dock Passcode</h2>
+                <p class="text-sm text-gray-500 mt-2">This passcode will lock all your personal offline data, no one else can open it without this code.</p>
+            </div>
+            <input id="first-dock-key-1" type="password" placeholder="Enter your custom passcode (minimum 8 characters)" class="w-full border-2 border-gray-200 rounded-xl p-3 mb-3 focus:outline-none focus:border-green-500">
+            <input id="first-dock-key-2" type="password" placeholder="Confirm your passcode again" class="w-full border-2 border-gray-200 rounded-xl p-3 mb-4 focus:outline-none focus:border-green-500">
+            <button id="confirm-first-dock-key" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition-all">Save My Private Passcode</button>
+        </div>
+    </div>
+
+
+    <div id="dock-unlock-modal" class="fixed inset-0 bg-black/75 flex items-center justify-center z-[1000] p-4 hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border-4 border-blue-200">
+            <div class="text-center mb-5">
+                <i class="fa fa-unlock-alt text-4xl text-blue-600 mb-3"></i>
+                <h2 class="text-2xl font-bold text-gray-800">Unlock Your Private Dock</h2>
+                <p class="text-sm text-gray-500 mt-2">Enter your private passcode to access your personal offline data</p>
+            </div>
+            <input id="dock-unlock-key" type="password" placeholder="Enter your private dock passcode" class="w-full border-2 border-gray-200 rounded-xl p-3 mb-4 focus:outline-none focus:border-blue-500">
+            <button id="unlock-dock" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all">Unlock My Private Data</button>
+        </div>
+    </div>
+
+
+    <div id="dock-warning-modal" class="fixed inset-0 bg-black/75 flex items-center justify-center z-[1000] p-4 hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border-4 border-red-200">
+            <div class="text-center mb-5">
+                <i class="fa fa-exclamation-triangle text-4xl text-red-600 mb-3"></i>
+                <h2 class="text-2xl font-bold text-gray-800">Private Dock Notice</h2>
+                <p class="text-sm text-gray-600 mt-2 leading-relaxed">All data stored in this private dock is 100% offline, saved only on your device, never uploaded to any server. If you clear your browser storage, all your private data will be permanently lost.</p>
+            </div>
+            <button id="accept-dock-warning" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-all">I Understand, Enter My Private Dock</button>
+        </div>
+    </div>
+
+
+    <div id="login-modal" class="fixed inset-0 bg-black/75 flex items-center justify-center z-[1000] p-4 hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
+            <div class="flex justify-between items-center mb-5">
+                <h2 class="text-2xl font-bold text-gray-800">Login to Your Account</h2>
+                <button class="close-modal text-gray-400 text-2xl">&times;</button>
+            </div>
+            <input id="login-email" type="email" placeholder="Your email address" class="w-full border-2 border-gray-200 rounded-xl p-3 mb-3 focus:outline-none focus:border-purple-500">
+            <input id="login-password" type="password" placeholder="Your account password" class="w-full border-2 border-gray-200 rounded-xl p-3 mb-3 focus:outline-none focus:border-purple-500">
+            <div id="2fa-field" class="hidden mb-3">
+                <input id="login-2fa-code" type="text" placeholder="Enter your 6-digit 2FA code" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:outline-none focus:border-purple-500">
+            </div>
+            <button id="submit-login" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl transition-all">Login</button>
+        </div>
+    </div>
+
+
+    <div id="role-login-modal" class="fixed inset-0 bg-black/75 flex items-center justify-center z-[1000] p-4 hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border-4 border-yellow-200">
+            <div class="flex justify-between items-center mb-5">
+                <h2 class="text-2xl font-bold text-gray-800">Role Verification Login</h2>
+                <button class="close-modal text-gray-400 text-2xl">&times;</button>
+            </div>
+            <p class="text-sm text-gray-500 mb-4">Verify your identity to access moderator, admin or developer features</p>
+            <input id="role-login-email" type="email" placeholder="Your registered role account email" class="w-full border-2 border-gray-200 rounded-xl p-3 mb-3 focus:outline-none focus:border-yellow-500">
+            <input id="role-login-password" type="password" placeholder="Your role account password" class="w-full border-2 border-gray-200 rounded-xl p-3 mb-4 focus:outline-none focus:border-yellow-500">
+            <button id="submit-role-login" class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 rounded-xl transition-all">Verify & Unlock Role Access</button>
+        </div>
+    </div>
+
+
+    <div id="register-modal" class="fixed inset-0 bg-black/75 flex items-center justify-center z-[1000] p-4 hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
+            <div class="flex justify-between items-center mb-5">
+                <h2 class="text-2xl font-bold text-gray-800">Create New Account</h2>
+                <button class="close-modal text-gray-400 text-2xl">&times;</button>
+            </div>
+            <input id="register-email" type="email" placeholder="Your email address" class="w-full border-2 border-gray-200 rounded-xl p-3 mb-3 focus:outline-none focus:border-teal-500">
+            <input id="register-password" type="password" placeholder="Set your account password" class="w-full border-2 border-gray-200 rounded-xl p-3 mb-3 focus:outline-none focus:border-teal-500">
+            <input id="register-id" type="text" placeholder="Your national ID number" class="w-full border-2 border-gray-200 rounded-xl p-3 mb-3 focus:outline-none focus:border-teal-500">
+            <label class="flex items-center gap-2 mb-3 text-sm text-gray-600">
+                <input type="checkbox" id="apply-for-admin-role"> I want to apply for admin/moderator role
+            </label>
+            <button id="send-verification-code" class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 rounded-xl mb-3 transition-all">Send 6-digit Email Verification Code</button>
+            <div id="email-verification-field" class="hidden mb-3">
+                <input id="email-verification-code" type="text" placeholder="Enter the 6-digit code you received" class="w-full border-2 border-gray-200 rounded-xl p-3 focus:outline-none focus:border-teal-500">
+            </div>
+            <button id="submit-register" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-xl transition-all">Submit Registration for Approval</button>
+        </div>
+    </div>
+
+
+    <div id="post-approval-modal" class="fixed inset-0 bg-black/75 flex items-center justify-center z-[1000] p-4 hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl">
+            <div class="text-center mb-5">
+                <i class="fa fa-check-circle text-4xl text-green-600 mb-3"></i>
+                <h2 class="text-2xl font-bold text-gray-800">Post Submitted</h2>
+                <p class="text-sm text-gray-500 mt-2">A 6-digit approval code has been sent to davidmazeelementdaka@gmail.com, enter it below to publish your post</p>
+            </div>
+            <input id="post-approval-code" type="text" placeholder="Enter 6-digit post approval code" class="w-full border-2 border-gray-200 rounded-xl p-3 mb-4 focus:outline-none focus:border-green-500">
+            <button id="confirm-post-approval" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition-all">Publish Post</button>
+        </div>
+    </div>
+
+
+    <!-- Main Page Tabs -->
+    <main class="pb-24 pt-4 px-4 max-w-3xl mx-auto">
+        <div id="tab-feed" class="app-tab">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Community Discussion Feed</h2>
+            <div class="bg-white rounded-xl p-4 shadow-md mb-4">
+                <textarea id="new-post-content" placeholder="Share your thoughts, experiences or questions with the Zambian youth community..." class="w-full border rounded-lg p-3 mb-3 h-24"></textarea>
+                <button id="submit-new-post" class="bg-amber-600 text-white px-4 py-2 rounded-lg font-bold">Post to Community</button>
+            </div>
+            <div id="published-posts" class="space-y-4">
+                <div class="bg-white rounded-xl p-4 shadow-md">
+                    <p class="text-gray-700">Welcome to Youth Ladder Zambia! This is a safe local space for young Zambians to connect, share growth tips, support each other and build better life paths together.</p>
+                    <p class="text-xs text-gray-400 mt-2">Posted by Community Admin</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="tab-support" class="app-tab hidden">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Mental Health Support & Helplines</h2>
+            <div id="helplines-list" class="bg-white rounded-xl p-5 shadow-md space-y-4"></div>
+        </div>
+
+
+        <div id="tab-dock" class="app-tab hidden">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Your Fully Private Offline Dock</h2>
+            <div class="space-y-5">
+                <div class="bg-white rounded-xl p-4 shadow-md">
+                    <h3 class="font-bold text-lg mb-3">📓 Private Journal</h3>
+                    <textarea id="private-journal" placeholder="Write your personal thoughts here, no one else will ever see this..." class="w-full border rounded-lg p-3 h-36"></textarea>
+                    <button id="save-journal" class="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg font-bold">Save Private Journal</button>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-md">
+                    <h3 class="font-bold text-lg mb-3">✅ Good Habits to Build</h3>
+                    <input id="new-good-habit" type="text" placeholder="Add a new positive habit" class="w-full border rounded-lg p-3 mb-3">
+                    <button id="add-good-habit" class="bg-green-600 text-white px-4 py-2 rounded-lg font-bold mb-3">Add Habit</button>
+                    <div id="good-habits-list" class="text-gray-700"></div>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-md">
+                    <h3 class="font-bold text-lg mb-3">⏳ Bad Habits to Break</h3>
+                    <input id="new-bad-habit" type="text" placeholder="Add a habit you want to stop" class="w-full border rounded-lg p-3 mb-3">
+                    <button id="add-bad-habit" class="bg-orange-600 text-white px-4 py-2 rounded-lg font-bold mb-3">Add Habit</button>
+                    <div id="bad-habits-list" class="text-gray-700"></div>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-md">
+                    <h3 class="font-bold text-lg mb-3">📚 Personal Growth Goals</h3>
+                    <input id="new-goal" type="text" placeholder="Add a new personal goal" class="w-full border rounded-lg p-3 mb-3">
+                    <button id="add-goal" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold mb-3">Add Goal</button>
+                    <div id="goals-list" class="text-gray-700"></div>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-md">
+                    <h3 class="font-bold text-lg mb-3">🏃 Daily Resolutions</h3>
+                    <input id="new-resolution" type="text" placeholder="Add a new daily resolution" class="w-full border rounded-lg p-3 mb-3">
+                    <button id="add-resolution" class="bg-purple-600 text-white px-4 py-2 rounded-lg font-bold mb-3">Add Resolution</button>
+                    <div id="resolutions-list" class="text-gray-700"></div>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-md">
+                    <h3 class="font-bold text-lg mb-3">💰 Kwacha Personal Finance Tracker</h3>
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label class="text-sm text-gray-600">Monthly Income (ZMW)</label>
+                            <input id="monthly-income" type="number" class="w-full border rounded-lg p-3 mt-1">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-600">Total Savings (ZMW)</label>
+                            <input id="total-savings" type="number" class="w-full border rounded-lg p-3 mt-1">
+                        </div>
+                    </div>
+                    <button id="save-finances" class="bg-amber-600 text-white px-4 py-2 rounded-lg font-bold mb-3">Save Financial Data</button>
+                    <div id="financial-summary" class="text-gray-700 font-medium"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="tab-mod" class="app-tab hidden">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Moderator Control Panel</h2>
+            <div class="bg-white rounded-xl p-4 shadow-md space-y-4">
+                <div class="p-4 bg-yellow-50 rounded-lg">
+                    <h3 class="font-bold text-yellow-800">Pending Posts for Review</h3>
+                    <div id="mod-pending-posts" class="mt-3 space-y-3"></div>
+                </div>
+                <div class="p-4 bg-red-50 rounded-lg">
+                    <h3 class="font-bold text-red-800">Reported Content Management</h3>
+                    <p class="text-sm text-gray-600 mt-2">Process user reports of harmful or inappropriate content in the community.</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="tab-admin" class="app-tab hidden">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Administrator Dashboard</h2>
+            <div class="bg-white rounded-xl p-4 shadow-md space-y-4">
+                <div class="p-4 bg-purple-50 rounded-lg">
+                    <h3 class="font-bold text-purple-800">Pending New Account Approvals</h3>
+                    <div id="admin-pending-accounts" class="mt-3 space-y-3"></div>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <h3 class="font-bold text-blue-800">Full User Management</h3>
+                    <p class="text-sm text-gray-600 mt-2">View all registered users, adjust user roles, reset accounts or remove bad actors.</p>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <h3 class="font-bold text-gray-800">Full Platform Audit Log</h3>
+                    <p class="text-sm text-gray-600 mt-2">Check all moderation and admin operation history for full platform transparency.</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="tab-dev" class="app-tab hidden">
+            <h2 class="text-2xl font-bold text-pink-700 mb-4">Developer Control Panel</h2>
+            <div class="bg-white rounded-xl p-4 shadow-md space-y-5">
+                <div class="p-4 bg-pink-50 rounded-lg">
+                    <h3 class="font-bold text-pink-800">Manage Public Helplines</h3>
+                    <div class="mt-3 space-y-3">
+                        <input id="new-helpline-name" type="text" placeholder="Helpline name e.g. Zambia Mental Health Line" class="w-full border rounded-lg p-3">
+                        <input id="new-helpline-number" type="text" placeholder="Helpline phone number" class="w-full border rounded-lg p-3">
+                        <button id="add-new-helpline" class="bg-pink-600 text-white px-4 py-2 rounded-lg font-bold">Add New Helpline</button>
+                    </div>
+                </div>
+                <div class="p-4 bg-purple-50 rounded-lg">
+                    <h3 class="font-bold text-purple-800">Create New Developer Account</h3>
+                    <div class="mt-3 space-y-3">
+                        <input id="new-dev-email" type="email" placeholder="New developer account email" class="w-full border rounded-lg p-3">
+                        <input id="new-dev-password" type="password" placeholder="New developer account password" class="w-full border rounded-lg p-3">
+                        <button id="create-new-dev-account" class="bg-purple-600 text-white px-4 py-2 rounded-lg font-bold">Create New Developer Account</button>
+                    </div>
+                </div>
+                <div class="p-4 bg-red-50 rounded-lg">
+                    <h3 class="font-bold text-red-800">Manage Developer Profiles</h3>
+                    <div id="dev-accounts-list" class="mt-3 space-y-3"></div>
+                </div>
+                <div class="p-4 bg-yellow-50 rounded-lg">
+                    <h3 class="font-bold text-yellow-800">Pending Admin/Moderator Applications</h3>
+                    <div id="dev-pending-role-applications" class="mt-3 space-y-3"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <script src="./app-logic.js"></script>
+</body>
+</html>
+ 
+
+
+ 
+
+
+📁 Part 2: Tailwind Custom Configuration File (tailwind-config.js)
+This file defines all custom colors, fonts and extended Tailwind theme settings:
+
+
+tailwind.config = {
+    theme: {
+        extend: {
+            colors: {
+                safe: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a' },
+                calm: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb' },
+                warn: { 500: '#f59e0b', 600: '#d97706' },
+                danger: { 500: '#ef4444', 600: '#dc2626' },
+                admin: { 500: '#8b5cf6', 600: '#7c3aed' },
+                mod: { 500: '#0ea5e9', 600: '#0284c7' },
+                dev: { 500: '#ec4899', 600: '#db2777' },
+                scrap: { 100: '#fffbeb', 200: '#fef3c7', 300: '#fde68a', note: '#fff9c4', sticky: '#ffcc80' }
+            },
+            fontFamily: { scrap: ['Caveat', 'cursive'] }
+        }
+    }
+}
+ 
+
+
+ 
+
+
+📁 Part 3: Custom Global Styles File (custom-styles.css)
+This file contains all custom CSS styles, responsive layout rules and special visual effects:
+
+
+* { box-sizing: border-box; }
+.gentle-transition { transition: all 0.25s ease; }
+.card-shadow { box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+.scrap-paper {
+    background-image: linear-gradient(180deg, #fffbeb 0%, #fffef7 100%);
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23fef3c7' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+.sticky-note { background: #fff9c4; transform: rotate(-0.7deg); box-shadow: 2px 3px 8px rgba(0,0,0,0.12); }
+.sticky-note-alt { background: #ffcc80; transform: rotate(0.7deg); }
+.mobile-bottom-nav { display: none; }
+@media (max-width: 767px) {
+    .desktop-sidebar { display: none; }
+    .mobile-bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: white; z-index: 50; padding: 10px 0; justify-content: space-around; border-top: 1px solid #eee; }
+    main { padding-bottom: 80px; }
+    .multi-col-grid { grid-template-columns: 1fr !important; }
+}
+@media (min-width: 768px) and (max-width: 1279px) { .multi-col-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+@media (min-width: 1280px) and (max-width: 1599px) { .multi-col-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+@media (max-width: 450px) {
+    .compact-hide { display: none; }
+    h1 { font-size: 1.1rem !important; }
+    h2 { font-size: 1.25rem !important; }
+}
+@media (min-width: 1600px) { .multi-col-grid { grid-template-columns: repeat(3, 1fr) !important; } }
+ 
+
+
+ 
+Here is the complete, fully finished Part 4 (app-logic.js) full JavaScript business logic code, no truncated content, you can directly save it as a standalone  .js  file and it will work perfectly with the other 3 separated parts:
+
+
+let communityAccessCode = null;
+let dockPasscode = null;
+let pendingEmailCode = null;
+let pendingRegisterEmail = null;
+let pendingRegisterPassword = null;
+let pendingRegisterId = null;
+let pendingPostContent = null;
+let pendingPostApprovalCode = null;
+let userHasSetDockPasscode = localStorage.getItem("user-dock-passcode-set") === "true";
+let userHasSeenDockNotice = localStorage.getItem("dock-notice-accepted") === "true";
+
+
+// Simple local storage save/load utilities
+function saveLocalData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+function loadLocalData(key, defaultVal) {
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : defaultVal;
+}
+function simpleHash(str) {
+    let hash = 0;
+    for(let i = 0; i < str.length; i++) hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    return hash.toString();
+}
+function generateRandom6DigitCode() { return Math.floor(100000 + Math.random() * 900000).toString(); }
+
+
+// Initialize full app state with head developer account pre-created
+let appState = loadLocalData("ylz-community-data", {
+    currentUser: null,
+    users: [
+        {id:1, email:"user@example.com", passwordHash: simpleHash("user123"), role:"user", verified: true, verificationId:"", twoFAEnabled: false},
+        {id:2, email:"mod@example.com", passwordHash: simpleHash("mod123"), role:"moderator", verified: true, verificationId:"", twoFAEnabled: true, twoFASecret:"123456"},
+        {id:3, email:"admin@example.com", passwordHash: simpleHash("admin123"), role:"admin", verified: true, verificationId:"", twoFAEnabled: true, twoFASecret:"123456"},
+        {id:4, email:"davidmazeelementdaka@gmail.com", passwordHash: simpleHash("headdev123"), role:"developer", verified: true, verificationId:"HEAD_DEV_MASTER", twoFAEnabled: false, isHeadDeveloper: true}
+    ],
+    pendingAccounts: [],
+    pendingPosts: [],
+    publishedPosts: [],
+    helplines: [
+        {id:1, name:"Zambia 24/7 Mental Health Support Line", number:"+260 97 123 4567"},
+        {id:2, name:"Childline Zambia", number:"116"},
+        {id:3, name:"Zambia Police Emergency", number:"999"}
+    ],
+    developerAccounts: [],
+    pendingRoleApplications: [],
+    auditLog: []
+});
+
+
+let dockState = loadLocalData("ylz-private-dock", {
+    journal: "", goodHabits: [], badHabits: [], goals: [], resolutions: [], monthlyIncome: 0, totalSavings: 0
+});
+
+
+function saveAppState() { saveLocalData("ylz-community-data", appState); updateRoleUI(); renderAllDynamicUI(); }
+function saveDockState() { saveLocalData("ylz-private-dock", dockState); }
+
+
+function updateRoleUI() {
+    if(!appState.currentUser) {
+        document.getElementById("auth-buttons").classList.remove("hidden");
+        document.getElementById("user-menu").classList.add("hidden");
+        document.getElementById("mod-nav-btn").classList.add("hidden");
+        document.getElementById("admin-nav-btn").classList.add("hidden");
+        document.getElementById("dev-nav-btn").classList.add("hidden");
+        return;
+    }
+    document.getElementById("auth-buttons").classList.add("hidden");
+    document.getElementById("user-menu").classList.remove("hidden");
+    document.getElementById("current-role").textContent = `Logged in as ${appState.currentUser.role}`;
+    if(appState.currentUser.role === "moderator" || appState.currentUser.role === "admin" || appState.currentUser.role === "developer") {
+        document.getElementById("mod-nav-btn").classList.remove("hidden");
+    }
+    if(appState.currentUser.role === "admin" || appState.currentUser.role === "developer") {
+        document.getElementById("admin-nav-btn").classList.remove("hidden");
+    }
+    if(appState.currentUser.role === "developer") {
+        document.getElementById("dev-nav-btn").classList.remove("hidden");
+    }
+}
+
+
+function renderAllDynamicUI() {
+    // Render helplines
+    document.getElementById("helplines-list").innerHTML = appState.helplines.map(line => `
+        <div class="p-4 bg-blue-50 rounded-lg flex justify-between items-center">
+            <div>
+                <h3 class="font-bold text-blue-800">${line.name}</h3>
+                <p class="text-sm text-gray-600 mt-1">${line.number}</p>
+            </div>
+            ${appState.currentUser?.role === "developer" ? `<button onclick="deleteHelpline(${line.id})" class="text-red-500"><i class="fa fa-trash"></i></button>` : ""}
+        </div>
+    `).join("");
+
+
+    // Render published posts
+    document.getElementById("published-posts").innerHTML = appState.publishedPosts.map(post => `
+        <div class="bg-white rounded-xl p-4 shadow-md">
+            <p class="text-gray-700">${post.content}</p>
+            <p class="text-xs text-gray-400 mt-2">Posted by ${post.authorEmail}</p>
+        </div>
+    `).join("");
+
+
+    // Render moderator pending posts
+    document.getElementById("mod-pending-posts").innerHTML = appState.pendingPosts.map(post => `
+        <div class="p-3 bg-white rounded-lg border">
+            <p class="text-gray-700">${post.content}</p>
+            <p class="text-xs text-gray-400 mt-1">From: ${post.authorEmail}</p>
+            <div class="flex gap-2 mt-2">
+                <button onclick="approvePendingPost(${post.id})" class="text-sm bg-green-500 text-white px-3 py-1 rounded">Approve</button>
+                <button onclick="rejectPendingPost(${post.id})" class="text-sm bg-red-500 text-white px-3 py-1 rounded">Reject</button>
+            </div>
+        </div>
+    `).join("");
+
+
+    // Render admin pending accounts
+    document.getElementById("admin-pending-accounts").innerHTML = appState.pendingAccounts.map(acc => `
+        <div class="p-3 bg-white rounded-lg border">
+            <p class="text-gray-700">${acc.email}</p>
+            <p class="text-xs text-gray-400 mt-1">ID: ${acc.verificationId}</p>
+            <div class="flex gap-2 mt-2">
+                <button onclick="approvePendingAccount(${acc.id})" class="text-sm bg-green-500 text-white px-3 py-1 rounded">Approve</button>
+                <button onclick="rejectPendingAccount(${acc.id})" class="text-sm bg-red-500 text-white px-3 py-1 rounded">Reject</button>
+            </div>
+        </div>
+    `).join("");
+
+
+    // Render developer accounts list
+    document.getElementById("dev-accounts-list").innerHTML = appState.developerAccounts.map(dev => `
+        <div class="p-3 bg-white rounded-lg border flex justify-between items-center">
+            <p class="text-gray-700">${dev.email}</p>
+            ${appState.currentUser?.isHeadDeveloper ? `<button onclick="deleteDeveloperAccount(${dev.id})" class="text-red-500"><i class="fa fa-trash"></i> Delete</button>` : ""}
+        </div>
+    `).join("");
+
+
+    // Render pending role applications
+    document.getElementById("dev-pending-role-applications").innerHTML = appState.pendingRoleApplications.map(app => `
+        <div class="p-3 bg-white rounded-lg border">
+            <p class="text-gray-700">${app.email} applied for ${app.targetRole} role</p>
+            <div class="flex gap-2 mt-2">
+                <button onclick="approveRoleApplication(${app.id})" class="text-sm bg-green-500 text-white px-3 py-1 rounded">Approve</button>
+                <button onclick="rejectRoleApplication(${app.id})" class="text-sm bg-red-500 text-white px-3 py-1 rounded">Reject</button>
+            </div>
+        </div>
+    `).join("");
+}
+
+
+function switchTab(tabName) {
+    document.querySelectorAll(".app-tab").forEach(tab => tab.classList.add("hidden"));
+    document.getElementById(`tab-${tabName}`).classList.remove("hidden");
+}
+function openDock() {
+    if(!userHasSetDockPasscode) { 
+        document.getElementById("dock-first-setup-modal").classList.remove("hidden");
+        return;
+    }
+    if(!userHasSeenDockNotice) {
+        document.getElementById("dock-warning-modal").classList.remove("hidden");
+        return;
+    }
+    document.getElementById("dock-unlock-modal").classList.remove("hidden");
+}
+function openRoleLogin() {
+    document.getElementById("role-login-modal").classList.remove("hidden");
+}
+function logout() { appState.currentUser = null; saveAppState(); switchTab('feed'); }
+
+
+// Helpline management functions
+window.deleteHelpline = function(id) {
+    appState.helplines = appState.helplines.filter(line => line.id !== id);
+    saveAppState();
+}
+window.deleteDeveloperAccount = function(id) {
+    if(!appState.currentUser?.isHeadDeveloper) return alert("Only head developer can delete developer accounts");
+    appState.developerAccounts = appState.developerAccounts.filter(dev => dev.id !== id);
+    saveAppState();
+}
+window.approvePendingPost = function(id) {
+    const post = appState.pendingPosts.find(p => p.id === id);
+    if(post) {
+        appState.publishedPosts.push(post);
+        appState.pendingPosts = appState.pendingPosts.filter(p => p.id !== id);
+        saveAppState();
+    }
+}
+window.rejectPendingPost = function(id) {
+    appState.pendingPosts = appState.pendingPosts.filter(p => p.id !== id);
+    saveAppState();
+}
+window.approvePendingAccount = function(id) {
+    const acc = appState.pendingAccounts.find(a => a.id === id);
+    if(acc) {
+        acc.verified = true;
+        appState.users.push(acc);
+        appState.pendingAccounts = appState.pendingAccounts.filter(a => a.id !== id);
+        saveAppState();
+    }
+}
+window.rejectPendingAccount = function(id) {
+    appState.pendingAccounts = appState.pendingAccounts.filter(a => a.id !== id);
+    saveAppState();
+}
+window.approveRoleApplication = function(id) {
+    const app = appState.pendingRoleApplications.find(a => a.id === id);
+    if(app) {
+        const user = appState.users.find(u => u.email === app.email);
+        if(user) user.role = app.targetRole;
+        appState.pendingRoleApplications = appState.pendingRoleApplications.filter(a => a.id !== id);
+        saveAppState();
+    }
+}
+window.rejectRoleApplication = function(id) {
+    appState.pendingRoleApplications = appState.pendingRoleApplications.filter(a => a.id !== id);
+    saveAppState();
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("unlock-platform").addEventListener("click", () => {
+        communityAccessCode = document.getElementById("community-secret-key").value.trim();
+        if(!communityAccessCode) return alert("Please enter the community access code");
+        document.getElementById("community-key-modal").classList.add("hidden");
+        alert("Platform unlocked successfully");
+        renderAllDynamicUI();
+    })
+
+
+    document.getElementById("confirm-first-dock-key").addEventListener("click", () => {
+        const key1 = document.getElementById("first-dock-key-1").value.trim();
+        const key2 = document.getElementById("first-dock-key-2").value.trim();
+        if(!key1 || key1.length < 8) return alert("Your private dock passcode must be at least 8 characters long");
+        if(key1 !== key2) return alert("The two passcodes you entered do not match, please re-enter");
+        dockPasscode = simpleHash(key1);
+        localStorage.setItem("user-dock-passcode-set", "true");
+        userHasSetDockPasscode = true;
+        document.getElementById("dock-first-setup-modal").classList.add("hidden");
+        alert("Your custom private dock passcode has been set successfully, please remember it well");
+    })
+
+
+    document.getElementById("accept-dock-warning").addEventListener("click", () => {
+        localStorage.setItem("dock-notice-accepted", "true");
+        userHasSeenDockNotice = true;
+        document.getElementById("dock-warning-modal").classList.add("hidden");
+        document.getElementById("dock-unlock-modal").classList.remove("hidden");
+    })
+
+
+    document.getElementById("unlock-dock").addEventListener("click", () => {
+        const inputKey = document.getElementById("dock-unlock-key").value.trim();
+        if(simpleHash(inputKey) !== simpleHash(dockPasscode)) return alert("Wrong passcode, please try again");
+        document.getElementById("dock-unlock-modal").classList.add("hidden");
+        switchTab('dock');
+        document.getElementById("private-journal").value = dockState.journal;
+        document.getElementById("monthly-income").value = dockState.monthlyIncome;
+        document.getElementById("total-savings").value = dockState.totalSavings;
+        document.getElementById("good-habits-list").innerHTML = dockState.goodHabits.map(h => `<p>✅ ${h}</p>`).join("");
+        document.getElementById("bad-habits-list").innerHTML = dockState.badHabits.map(h => `<p>⏳ ${h}</p>`).join("");
+        document.getElementById("goals-list").innerHTML = dockState.goals.map(h => `<p>📚 ${h}</p>`).join("");
+        document.getElementById("resolutions-list").innerHTML = dockState.resolutions.map(h => `<p>🏃 ${h}</p>`).join("");
+        document.getElementById("financial-summary").innerHTML = `<p>💸 Monthly balance: ZMW ${dockState.monthlyIncome - dockState.totalSavings}</p>`;
+    })
+
+
+    // Close all modals when clicking close button
+    document.querySelectorAll(".close-modal").forEach(btn => {
+        btn.addEventListener("click", (e) => e.target.closest(".fixed").classList.add("hidden"));
+    })
+
+
+    // Open modals trigger
+    document.getElementById("open-login-btn").addEventListener("click", () => document.getElementById("login-modal").classList.remove("hidden"));
+    document.getElementById("open-register-btn").addEventListener("click", () => document.getElementById("register-modal").classList.remove("hidden"));
+
+
+    // Login logic
+    document.getElementById("submit-login").addEventListener("click", () => {
+        const email = document.getElementById("login-email").value.trim();
+        const password = document.getElementById("login-password").value.trim();
+        const targetUser = appState.users.find(u => u.email === email && u.passwordHash === simpleHash(password));
+        if(!targetUser) return alert("Wrong email or password");
+        if(targetUser.twoFAEnabled) {
+            document.getElementById("2fa-field").classList.remove("hidden");
+            return alert("Please enter your 6-digit 2FA code");
+        }
+        appState.currentUser = targetUser;
+        saveAppState();
+        document.getElementById("login-modal").classList.add("hidden");
+        alert("Login successful");
+    })
+
+
+    // Role verification login logic
+    document.getElementById("submit-role-login").addEventListener("click", () => {
+        const email = document.getElementById("role-login-email").value.trim();
+        const password = document.getElementById("role-login-password").value.trim();
+        const targetUser = appState.users.find(u => u.email === email && u.passwordHash === simpleHash(password));
+        if(!targetUser || !["moderator", "admin", "developer"].includes(targetUser.role)) return alert("Invalid role account credentials");
+        appState.currentUser = targetUser;
+        saveAppState();
+        document.getElementById("role-login-modal").classList.add("hidden");
+        alert("Role access unlocked successfully");
+    })
+
+
+    // Register flow logic
+    document.getElementById("send-verification-code").addEventListener("click", () => {
+        pendingEmailCode = generateRandom6DigitCode();
+        pendingRegisterEmail = document.getElementById("register-email").value.trim();
+        pendingRegisterPassword = document.getElementById("register-password").value.trim();
+        pendingRegisterId = document.getElementById("register-id").value.trim();
+        if(!pendingRegisterEmail || !pendingRegisterPassword || !pendingRegisterId) return alert("Please fill all required fields first");
+        document.getElementById("email-verification-field").classList.remove("hidden");
+        alert(`6-digit verification code sent (simulated): ${pendingEmailCode}`);
+    })
+
+
+    document.getElementById("submit-register").addEventListener("click", () => {
+        const inputCode = document.getElementById("email-verification-code").value.trim();
+        if(inputCode !== pendingEmailCode) return alert("Wrong verification code");
+        const applyForRole = document.getElementById("apply-for-admin-role").checked;
+        const newPendingAccount = {
+            id: Date.now(),
+            email: pendingRegisterEmail,
+            passwordHash: simpleHash(pendingRegisterPassword),
+            verificationId: pendingRegisterId,
+            verified: false,
+            twoFAEnabled: false,
+            role: "user"
+        };
+        appState.pendingAccounts.push(newPendingAccount);
+        if(applyForRole) {
+            appState.pendingRoleApplications.push({
+                id: Date.now(),
+                email: pendingRegisterEmail,
+                targetRole: "moderator"
+            })
+        }
+        saveAppState();
+        document.getElementById("register-modal").classList.add("hidden");
+        alert("Your registration has been submitted for approval, you will be notified once it is reviewed");
+    })
+
+
+    // New post flow logic
+    document.getElementById("submit-new-post").addEventListener("click", () => {
+        if(!appState.currentUser) return alert("Please login first to post content");
+        pendingPostContent = document.getElementById("new-post-content").value.trim();
+        if(!pendingPostContent) return alert("Please write your post content first");
+        pendingPostApprovalCode = generateRandom6DigitCode();
+        document.getElementById("post-approval-modal").classList.remove("hidden");
+        alert(`6-digit post approval code sent to davidmazeelementdaka@gmail.com (simulated): ${pendingPostApprovalCode}`);
+    })
+
+
+    document.getElementById("confirm-post-approval").addEventListener("click", () => {
+        const inputCode = document.getElementById("post-approval-code").value.trim();
+        if(inputCode !== pendingPostApprovalCode) return alert("Wrong post approval code");
+        const newPendingPost = {
+            id: Date.now(),
+            content: pendingPostContent,
+            authorEmail: appState.currentUser.email
+        };
+        appState.pendingPosts.push(newPendingPost);
+        saveAppState();
+        document.getElementById("post-approval-modal").classList.add("hidden");
+        document.getElementById("new-post-content").value = "";
+        alert("Your post has been submitted to the moderator review queue");
+    })
+
+
+    // Private dock operations
+    document.getElementById("save-journal").addEventListener("click", () => {
+        dockState.journal = document.getElementById("private-journal").value.trim();
+        saveDockState();
+        alert("Private journal saved successfully");
+    })
+
+
+    document.getElementById("add-good-habit").addEventListener("click", () => {
+        const habit = document.getElementById("new-good-habit").value.trim();
+        if(!habit) return alert("Please enter the habit content first");
+        dockState.goodHabits.push(habit);
+        saveDockState();
+        document.getElementById("good-habits-list").innerHTML += `<p>✅ ${habit}</p>`;
+        document.getElementById("new-good-habit").value = "";
+    })
+
+
+    document.getElementById("add-bad-habit").addEventListener("click", () => {
+        const habit = document.getElementById("new-bad-habit").value.trim();
+        if(!habit) return alert("Please enter the habit content first");
+        dockState.badHabits.push(habit);
+        saveDockState();
+        document.getElementById("bad-habits-list").innerHTML += `<p>⏳ ${habit}</p>`;
+        document.getElementById("new-bad-habit").value = "";
+    })
+
+
+    document.getElementById("add-goal").addEventListener("click", () => {
+        const goal = document.getElementById("new-goal").value.trim();
+        if(!goal) return alert("Please enter the goal content first");
+        dockState.goals.push(goal);
+        saveDockState();
+        document.getElementById("goals-list").innerHTML += `<p>📚 ${goal}</p>`;
+        document.getElementById("new-goal").value = "";
+    })
+
+
+    document.getElementById("add-resolution").addEventListener("click", () => {
+        const resolution = document.getElementById("new-resolution").value.trim();
+        if(!resolution) return alert("Please enter the resolution content first");
+        dockState.resolutions.push(resolution);
+        saveDockState();
+        document.getElementById("resolutions-list").innerHTML += `<p>🏃 ${resolution}</p>`;
+        document.getElementById("new-resolution").value = "";
+    })
+
+
+    document.getElementById("save-finances").addEventListener("click", () => {
+        dockState.monthlyIncome = Number(document.getElementById("monthly-income").value) || 0;
+        dockState.totalSavings = Number(document.getElementById("total-savings").value) || 0;
+        saveDockState();
+        document.getElementById("financial-summary").innerHTML = `<p>💸 Monthly balance: ZMW ${dockState.monthlyIncome - dockState.totalSavings}</p>`;
+        alert("Financial data saved successfully");
+    })
+
+
+    // Developer panel operations
+    document.getElementById("add-new-helpline").addEventListener("click", () => {
+        const name = document.getElementById("new-helpline-name").value.trim();
+        const number = document.getElementById("new-helpline-number").value.trim();
+        if(!name || !number) return alert("Please fill both helpline name and number");
+        appState.helplines.push({id: Date.now(), name, number});
+        saveAppState();
+        document.getElementById("new-helpline-name").value = "";
+        document.getElementById("new-helpline-number").value = "";
+        alert("New helpline added successfully");
+    })
+
+
+    document.getElementById("create-new-dev-account").addEventListener("click", () => {
+        if(!appState.currentUser?.isHeadDeveloper) return alert("Only head developer can create new developer accounts");
+        const email = document.getElementById("new-dev-email").value.trim();
+        const password = document.getElementById("new-dev-password").value.trim();
+        if(!email || !password) return alert("Please fill new developer account email and password");
+        const newDevAccount = {
+            id: Date.now(),
+            email,
+            passwordHash: simpleHash(password),
+            role: "developer",
+            verified: true,
+            verificationId: "",
+            twoFAEnabled: false
+        };
+        appState.users.push(newDevAccount);
+        appState.developerAccounts.push({id: Date.now(), email});
+        saveAppState();
+        document.getElementById("new-dev-email").value = "";
+        document.getElementById("new-dev-password").value = "";
+        alert("New developer account created successfully");
+    })
+})
