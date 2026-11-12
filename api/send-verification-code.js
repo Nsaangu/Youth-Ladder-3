@@ -1,1 +1,5 @@
-
+{
+  "dependencies": {
+    "resend": "^4.0.0"
+  }
+}
