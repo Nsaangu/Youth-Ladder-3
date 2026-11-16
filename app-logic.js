@@ -467,3 +467,63 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("New developer account created successfully");
     })
 })
+// Generate random 6-digit verification code
+function generate6DigitCode() {
+  return Math.floor(100000 + Math.random() * 900000).toString()
+}
+
+// Send new verification code, overwrite any old existing code for this email
+export async function send10MinuteVerificationCode(userEmail) {
+  // Generate new 6 digit code
+  const newCode = generate6DigitCode()
+  // Upsert (overwrite) the new code into Supabase, auto set 10 minute expiry
+  const { error: dbError } = await supabase
+    .from('verification_codes')
+    .upsert({
+      user_email: userEmail,
+      six_digit_code: newCode
+    })
+  
+  if (dbError) return { success: false, error: "Failed to save verification code" }
+
+  // Send the code via Resend email
+  const { data, error: emailError } = await resend.emails.send({
+    from: 'Youth Ladder Verification <no-reply@yourzambiaplatform.com>',
+    to: [userEmail],
+    subject: 'Your 6 Digit Verification Code (Expires in 10 Minutes)',
+    html: `
+      <h2>Your Youth Ladder Signup Code</h2>
+      <p>Your 6 digit verification code is: <h1 style="color:#2563eb">${newCode}</h1></p>
+      <p>This code will automatically expire exactly 10 minutes after you requested it, and can only be used once.</p>
+    `
+  })
+
+  if (emailError) return { success: false, error: emailError.message }
+  return { success: true, message: "Verification code sent, 10 minute countdown started" }
+}
+
+// Verify the user submitted code is still valid
+export async function verifyUser6DigitCode(userEmail, submittedCode) {
+  const { data, error } = await supabase
+    .from('verification_codes')
+    .select('*')
+    .eq('user_email', userEmail)
+    .single()
+  
+  if (error) return { success: false, error: "No active verification code found, please request a new one" }
+  
+  // Check if code is expired first
+  if (new Date(data.expires_at) < new Date()) {
+    return { success: false, error: "This verification code has expired, please request a new one" }
+  }
+
+  // Check if code matches
+  if (data.six_digit_code !== submittedCode) {
+    return { success: false, error: "Incorrect 6 digit code, please check your email" }
+  }
+
+  // Delete the used code so it cannot be reused
+  await supabase.from('verification_codes').delete().eq('id', data.id)
+  return { success: true, message: "Verification passed, you can now create your account" }
+}
+ 
